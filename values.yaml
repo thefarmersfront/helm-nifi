@@ -19,6 +19,9 @@ image:
 securityContext:
   runAsUser: 1000
   fsGroup: 1000
+  sysctls:
+    - name: net.ipv4.ip_local_port_range
+      value: "10000 65000"
 
 ## @param useHostNetwork - boolean - optional
 ## Bind ports on the hostNetwork. Useful for CNI networking where hostPort might
@@ -36,8 +39,7 @@ sts:
   useHostNetwork: null
   hostPort: null
   pod:
-    annotations:
-      security.alpha.kubernetes.io/sysctls: net.ipv4.ip_local_port_range=10000 65000
+    annotations: {}
       #prometheus.io/scrape: "true"
   serviceAccount:
     create: false
