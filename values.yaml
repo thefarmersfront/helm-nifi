@@ -123,15 +123,15 @@ properties:
 # Nifi User Authentication
 auth:
   # If set while LDAP or oidc enabled, this value is ignored and not used as the initial admin.
-  admin: CN=admin, OU=NIFI 
+  admin: CN=admin, OU=NIFI
   SSL:
     keystorePasswd: changeMe
     truststorePasswd: changeMe
 
-  # Automaticaly disabled if OIDC or LDAP enabled
+  # Automatically disabled if OIDC or LDAP enabled
   singleUser:
     username: username
-    password: changemechangeme # Must to have at least 12 characters
+    password: changemechangeme # Must have at least 12 characters
 
   clientAuth:
     enabled: false
