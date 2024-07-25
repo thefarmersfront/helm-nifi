@@ -1,5 +1,8 @@
 ---
 # Number of nifi nodes
+# Node growth requires careful management of Node Identifier.
+# You may need to manually modify users.xml due to the node identifier.
+# See https://nifi.apache.org/docs/nifi-docs/html/administration-guide.html#cluster-node-identities
 replicaCount: 1
 
 ## Set default image, imageTag, and imagePullPolicy.
@@ -39,17 +42,17 @@ sts:
   useHostNetwork: null
   hostPort: null
   pod:
-    annotations: {}
       #prometheus.io/scrape: "true"
+    annotations: { }
   serviceAccount:
     create: false
     #name: nifi
-    annotations: {}
-  hostAliases: []
 #    - ip: "1.2.3.4"
 #      hostnames:
 #        - example.com
 #        - example
+    annotations: { }
+  hostAliases: [ ]
 
   startupProbe:
     enabled: false
@@ -110,8 +113,8 @@ properties:
   siteToSite:
     port: 10000
   # use properties.safetyValve to pass explicit 'key: value' pairs that overwrite other configuration
-  safetyValve: {}
     #nifi.variable.registry.properties: "${NIFI_HOME}/example1.properties, ${NIFI_HOME}/example2.properties"
+  safetyValve: { }
 
   ## Include aditional processors
   # customLibPath: "/opt/configuration_resources/custom_lib"
@@ -193,7 +196,7 @@ service:
   type: ClusterIP
   httpsPort: 8443
   # nodePort: 30236
-  annotations: {}
+  annotations: { }
     # loadBalancerIP:
     ## Load Balancer sources
     ## https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service
@@ -219,7 +222,7 @@ service:
         targetPort: 7002
         #nodePort: 30702
 ## Configure containerPorts section with following attributes: name, containerport and protocol.
-containerPorts: []
+containerPorts: [ ]
 # - name: example
 #   containerPort: 1111
 #   protocol: TCP
@@ -229,9 +232,9 @@ containerPorts: []
 ingress:
   enabled: false
   # className: nginx
-  annotations: {}
-  tls: []
-  hosts: []
+  annotations: { }
+  tls: [ ]
+  hosts: [ ]
   path: /
   # If you want to change the default path, see this issue https://github.com/cetic/helm-nifi/issues/22
 
@@ -261,7 +264,7 @@ persistence:
   #
   # The default storage class is used if this variable is not set.
 
-  accessModes:  [ReadWriteOnce]
+  accessModes: [ ReadWriteOnce ]
 
   ## Use subPath and have 1 persistent volume instead of 7 volumes - use when your k8s nodes have limited volume slots, to limit waste of space,
   ##  or your available volume sizes are quite large
@@ -295,7 +298,7 @@ persistence:
 ## Configure resource requests and limits
 ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
 ##
-resources: {}
+resources: { }
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -317,13 +320,13 @@ logresources:
 
 ## Enables setting your own affinity. Mutually exclusive with sts.AntiAffinity
 ## You need to set the value of sts.AntiAffinity other than "soft" and "hard"
-affinity: {}
+affinity: { }
 
-nodeSelector: {}
+nodeSelector: { }
 
-tolerations: []
+tolerations: [ ]
 
-initContainers: []
+initContainers: [ ]
   # foo-init:  # <- will be used as container name
   #   image: "busybox:1.30.1"
   #   imagePullPolicy: "IfNotPresent"
@@ -332,23 +335,23 @@ initContainers: []
   #     - mountPath: /tmp/foo
   #       name: foo
 
-extraVolumeMounts: []
+extraVolumeMounts: [ ]
 
-extraVolumes: []
+extraVolumes: [ ]
 
 ## Extra containers
-extraContainers: []
+extraContainers: [ ]
 
 terminationGracePeriodSeconds: 30
 
 ## Extra environment variables that will be pass onto deployment pods
-env: []
+env: [ ]
 
 ## Extra environment variables from secrets and config maps
-envFrom: []
+envFrom: [ ]
 
 ## Extra options to add to the bootstrap.conf file
-extraOptions: []
+extraOptions: [ ]
 
 # envFrom:
 #   - configMapRef:
@@ -457,3 +460,4 @@ metrics:
       # namespace: monitoring
       # Additional labels for the ServiceMonitor
       labels: {}
+      labels: { }
