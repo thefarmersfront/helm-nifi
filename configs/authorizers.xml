@@ -52,6 +52,8 @@
         {{- end }}
         {{- if and .Values.auth.ldap.enabled (not .Values.auth.admin) }}
         <property name="Initial User Identity admin">{{.Values.auth.ldap.admin}}</property>
+        {{- else if .Values.auth.oidc.enabled }}
+        <property name="Initial User Identity {{ $replicas }}">{{.Values.auth.oidc.admin}}</property>
         {{- else }}
         <property name="Initial User Identity admin">{{ .Values.auth.admin }}</property>
         {{- end}}
