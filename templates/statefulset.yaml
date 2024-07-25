@@ -134,43 +134,14 @@ spec:
           FQDN=$(hostname -f)
 {{- end }}
 
-          cat "${NIFI_HOME}/conf/nifi.temp" > "${NIFI_HOME}/conf/nifi.properties"
+          mv "${NIFI_HOME}/conf/nifi.properties" "${NIFI_HOME}/conf/nifi.properties.old"
+          mv "${NIFI_HOME}/conf/authorizers.xml" "${NIFI_HOME}/conf/authorizers.xml.old"
+
+          cat "${NIFI_HOME}/conf/nifi.properties.temp" > "${NIFI_HOME}/conf/nifi.properties"
+          cat "${NIFI_HOME}/conf/authorizers.xml.temp" > "${NIFI_HOME}/conf/authorizers.xml"
 
 {{- if .Values.auth.ldap.enabled }}
-          cat "${NIFI_HOME}/conf/authorizers.temp" > "${NIFI_HOME}/conf/authorizers.xml"
-          cat "${NIFI_HOME}/conf/login-identity-providers-ldap.xml" > "${NIFI_HOME}/conf/login-identity-providers.xml"
-{{- else if .Values.auth.oidc.enabled }}
-          xmlstarlet ed --inplace --delete "//authorizers/authorizer[identifier='single-user-authorizer']" "${NIFI_HOME}/conf/authorizers.xml"
-          xmlstarlet ed --inplace --update "//authorizers/userGroupProvider/property[@name='Users File']" -v './auth-conf/users.xml' "${NIFI_HOME}/conf/authorizers.xml"
-          xmlstarlet ed --inplace --delete "//authorizers/userGroupProvider/property[@name='Initial User Identity 1']" "${NIFI_HOME}/conf/authorizers.xml"
-          xmlstarlet ed --inplace \
-                        --subnode "authorizers/userGroupProvider" --type 'elem' -n 'property' \
-                          --value {{ .Values.auth.oidc.admin | quote }} \
-                        --insert "authorizers/userGroupProvider/property[not(@name)]" --type attr -n name \
-                          --value "Initial User Identity {{ .Values.replicaCount }}" \
-                        "${NIFI_HOME}/conf/authorizers.xml"
-          xmlstarlet ed --inplace --update "//authorizers/accessPolicyProvider/property[@name='Initial Admin Identity']" -v {{ .Values.auth.oidc.admin | quote }} "${NIFI_HOME}/conf/authorizers.xml"
-          xmlstarlet ed --inplace --update "//authorizers/accessPolicyProvider/property[@name='Authorizations File']" -v './auth-conf/authorizations.xml' "${NIFI_HOME}/conf/authorizers.xml"
-          {{- if .Values.properties.isNode }}
-                      xmlstarlet ed --inplace --delete "authorizers/accessPolicyProvider/property[@name='Node Identity 1']" "${NIFI_HOME}/conf/authorizers.xml"
-            {{ range untilStep 0 (int .Values.replicaCount) 1 }}
-                      xmlstarlet ed --inplace \
-                                    --subnode "authorizers/accessPolicyProvider" --type 'elem' -n 'property' \
-                                    --value "CN={{ template "apache-nifi.fullname" $ }}-{{ . }}.{{ template "apache-nifi.fullname" $ }}-headless.{{ $.Release.Namespace }}.svc.{{ $.Values.certManager.clusterDomain }}, OU=NIFI" \
-                                    --insert "authorizers/accessPolicyProvider/property[not(@name)]" --type attr -n name \
-                                    --value "Node Identity {{ . }}" \
-                                    "${NIFI_HOME}/conf/authorizers.xml"
-                      xmlstarlet ed --inplace \
-                                    --subnode "authorizers/userGroupProvider" --type 'elem' -n 'property' \
-                                    --value "CN={{ template "apache-nifi.fullname" $ }}-{{ . }}.{{ template "apache-nifi.fullname" $ }}-headless.{{ $.Release.Namespace }}.svc.{{ $.Values.certManager.clusterDomain }}, OU=NIFI" \
-                                    --insert "authorizers/userGroupProvider/property[not(@name)]" --type attr -n name \
-                                    --value "Initial User Identity {{ . }}" \
-                                    "${NIFI_HOME}/conf/authorizers.xml"
-            {{/* range untilStep 0 (int .Values.replicaCount ) 1 */}}{{ end }}
-          {{- end }}
-{{- else if .Values.auth.clientAuth.enabled }}
-          cat "${NIFI_HOME}/conf/authorizers.temp" > "${NIFI_HOME}/conf/authorizers.xml"
-          xmlstarlet ed --inplace --delete "//authorizers/authorizer[identifier='single-user-authorizer']" "${NIFI_HOME}/conf/authorizers.xml"
+          cat "${NIFI_HOME}/conf/login-identity-providers-custom.xml" > "${NIFI_HOME}/conf/login-identity-providers.xml"
 {{- else if .Values.auth.singleUser.username }}
           cat "${NIFI_HOME}/conf/login-identity-providers-custom.xml" > "${NIFI_HOME}/conf/login-identity-providers.xml"
           bin/nifi.sh set-single-user-credentials {{ .Values.auth.singleUser.username }} {{ .Values.auth.singleUser.password }}
@@ -198,22 +169,6 @@ spec:
 {{- end }}
 
 {{- if .Values.certManager.enabled }}
-          xmlstarlet ed --inplace --delete "authorizers/accessPolicyProvider/property[@name='Node Identity 1']" "${NIFI_HOME}/conf/authorizers.xml"
-{{ range untilStep 0 (int .Values.replicaCount) 1 }}
-          xmlstarlet ed --inplace \
-                        --subnode "authorizers/accessPolicyProvider" --type 'elem' -n 'property' \
-                          --value "CN={{ template "apache-nifi.fullname" $ }}-{{ . }}.{{ template "apache-nifi.fullname" $ }}-headless.{{ $.Release.Namespace }}.svc.{{ $.Values.certManager.clusterDomain }}, OU=NIFI" \
-                        --insert "authorizers/accessPolicyProvider/property[not(@name)]" --type attr -n name \
-                          --value "Node Identity {{ . }}" \
-                        "${NIFI_HOME}/conf/authorizers.xml"
-          xmlstarlet ed --inplace \
-                        --subnode "authorizers/userGroupProvider" --type 'elem' -n 'property' \
-                          --value "CN={{ template "apache-nifi.fullname" $ }}-{{ . }}.{{ template "apache-nifi.fullname" $ }}-headless.{{ $.Release.Namespace }}.svc.{{ $.Values.certManager.clusterDomain }}, OU=NIFI" \
-                        --insert "authorizers/userGroupProvider/property[not(@name)]" --type attr -n name \
-                          --value "Initial User Identity {{ . }}" \
-                        "${NIFI_HOME}/conf/authorizers.xml"
-{{/* range untilStep 0 (int .Values.replicaCount ) 1 */}}{{ end }}
-
           prop_replace nifi.security.keystore "${NIFI_HOME}/tls/keystore.jks"
           prop_replace nifi.security.keystoreType JKS
           prop_replace nifi.security.keystorePasswd "{{ .Values.certManager.keystorePasswd }}"
@@ -500,11 +455,11 @@ spec:
             mountPath: /opt/nifi/nifi-current/conf/bootstrap.conf
             subPath: "bootstrap.conf"
           - name: "nifi-properties"
-            mountPath: /opt/nifi/nifi-current/conf/nifi.temp
-            subPath: "nifi.temp"
-          - name: "authorizers-temp"
-            mountPath: /opt/nifi/nifi-current/conf/authorizers.temp
-            subPath: "authorizers.temp"
+            mountPath: /opt/nifi/nifi-current/conf/nifi.properties.temp
+            subPath: "nifi.properties"
+          - name: "authorizers-xml"
+            mountPath: /opt/nifi/nifi-current/conf/authorizers.xml.temp
+            subPath: "authorizers.xml"
           - name: "bootstrap-notification-services-xml"
             mountPath: /opt/nifi/nifi-current/conf/bootstrap-notification-services.xml
             subPath: "bootstrap-notification-services.xml"
@@ -754,13 +709,13 @@ spec:
           name: {{ template "apache-nifi.fullname" . }}-config
           items:
             - key: "nifi.properties"
-              path: "nifi.temp"
-      - name: "authorizers-temp"
+              path: "nifi.properties"
+      - name: "authorizers-xml"
         configMap:
           name: {{ template "apache-nifi.fullname" . }}-config
           items:
             - key: "authorizers.xml"
-              path: "authorizers.temp"
+              path: "authorizers.xml"
       - name: "bootstrap-notification-services-xml"
         configMap:
           name: {{ template "apache-nifi.fullname" . }}-config
