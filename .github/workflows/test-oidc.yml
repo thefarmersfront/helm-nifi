@@ -1,8 +1,12 @@
 name: OIDC Logins
 
-on:
-  push:
-  pull_request:
+#on:
+#  push:
+#    branches:
+#      - main
+#  pull_request:
+#    branches:
+#      - main
 
 jobs:
   oidc-insecure:
