@@ -25,6 +25,9 @@ maintainers:
   - name: zakaria2905
     email: zakaria.hajja@cetic.be
     url: https://github.com/zakaria2905
+  - name: namioto
+    email: namioto@gmail.com
+    url: https://github.com/namioto
 dependencies:
   - name: zookeeper
     version: 13.4.8
