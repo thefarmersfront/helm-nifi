@@ -52,6 +52,8 @@
         {{- end }}
         {{- if and .Values.auth.ldap.enabled (not .Values.auth.admin) }}
         <property name="Initial User Identity admin">{{.Values.auth.ldap.admin}}</property>
+        {{- else if .Values.auth.oidc.enabled }}
+        <property name="Initial User Identity {{ $replicas }}">{{.Values.auth.oidc.admin}}</property>
         {{- else }}
         <property name="Initial User Identity admin">{{ .Values.auth.admin }}</property>
         {{- end}}
@@ -154,8 +156,6 @@
         <property name="Group Member Attribute"></property>
         <property name="Group Member Attribute - Referenced User Attribute"></property>
     </userGroupProvider>
-    {{- end}}
-
     <!--
         The CompositeUserGroupProvider will provide support for retrieving users and groups from multiple sources.
         - User Group Provider [unique key] - The identifier of user group providers to load from. The name of
@@ -164,34 +164,22 @@
             NOTE: Any identity mapping rules specified in nifi.properties are not applied in this implementation. This behavior
             would need to be applied by the base implementation.
     -->
-    {{- if .Values.auth.ldap.enabled}}
     <userGroupProvider>
         <identifier>composite-configurable-user-group-provider</identifier>
         <class>org.apache.nifi.authorization.CompositeConfigurableUserGroupProvider</class>
         <property name="Configurable User Group Provider">file-user-group-provider</property>
         <property name="User Group Provider 1">ldap-user-group-provider</property>
     </userGroupProvider>
-    {{- end}}
 
-    <!--
-        The CompositeConfigurableUserGroupProvider will provide support for retrieving users and groups from multiple sources.
-        Additionally, a single configurable user group provider is required. Users from the configurable user group provider
-        are configurable, however users loaded from one of the User Group Provider [unique key] will not be.
-        - Configurable User Group Provider - A configurable user group provider.
-        - User Group Provider [unique key] - The identifier of user group providers to load from. The name of
-            each property must be unique, for example: "User Group Provider A", "User Group Provider B",
-            "User Group Provider C" or "User Group Provider 1", "User Group Provider 2", "User Group Provider 3"
-            NOTE: Any identity mapping rules specified in nifi.properties are not applied in this implementation. This behavior
-            would need to be applied by the base implementation.
-    -->
-    <!-- To enable the composite-configurable-user-group-provider remove 2 lines. This is 1 of 2.
-    <userGroupProvider>
-        <identifier>composite-configurable-user-group-provider</identifier>
-        <class>org.apache.nifi.authorization.CompositeConfigurableUserGroupProvider</class>
-        <property name="Configurable User Group Provider">file-user-group-provider</property>
-        <property name="User Group Provider 1"></property>
-    </userGroupProvider>
-    To enable the composite-configurable-user-group-provider remove 2 lines. This is 2 of 2. -->
+    <authorizer>
+        <identifier>file-provider</identifier>
+        <class>org.apache.nifi.authorization.FileAuthorizer</class>
+        <property name="Authorizations File">./auth-conf/authorizations.xml</property>
+        <property name="Users File">./auth-conf/users.xml</property>
+        <property name="Initial Admin Identity">{{.Values.auth.ldap.admin}}</property>
+        <property name="Legacy Authorized Users File"></property>
+    </authorizer>
+    {{- end}}
 
     <!--
         The FileAccessPolicyProvider will provide support for managing access policies which is backed by a file
@@ -224,14 +212,15 @@
         <property name="Authorizations File">./auth-conf/authorizations.xml</property>
         {{- if and .Values.auth.ldap.enabled (not .Values.auth.admin) }}
         <property name="Initial Admin Identity">{{.Values.auth.ldap.admin}}</property>
+        {{- else if .Values.auth.oidc.enabled }}
+        <property name="Initial Admin Identity">{{.Values.auth.oidc.admin}}</property>
         {{- else }}
         <property name="Initial Admin Identity">{{ .Values.auth.admin }}</property>
-        {{- end}}
+        {{- end }}
         <property name="Legacy Authorized Users File"></property>
         {{- range $i := until $replicas }}
         <property name="Node Identity {{ $i }}">CN={{ $fullname }}-{{ $i }}.{{ $fullname }}-headless.{{ $namespace }}.svc.cluster.local, OU=NIFI</property>
         {{- end }}
-        <property name="Node Identity"></property>
     </accessPolicyProvider>
      <!--
         The StandardManagedAuthorizer. This authorizer implementation must be configured with the
@@ -268,15 +257,11 @@
             NOTE: Any identity mapping rules specified in nifi.properties will also be applied to the node identities,
             so the values should be the unmapped identities (i.e. full DN from a certificate).
     -->
-    {{- if .Values.auth.ldap.enabled}}
-    <authorizer>
-        <identifier>file-provider</identifier>
-        <class>org.apache.nifi.authorization.FileAuthorizer</class>
-        <property name="Authorizations File">./auth-conf/authorizations.xml</property>
-        <property name="Users File">./auth-conf/users.xml</property>
-        <property name="Initial Admin Identity">{{.Values.auth.ldap.admin}}</property>
-        <property name="Legacy Authorized Users File"></property>
 
+{{- if not (and .Values.auth.ldap.enabled .Values.auth.oidc.enabled) }}
+    <authorizer>
+        <identifier>single-user-authorizer</identifier>
+        <class>org.apache.nifi.authorization.single.user.SingleUserAuthorizer</class>
     </authorizer>
-    {{- end}}
+{{- end }}
 </authorizers>
