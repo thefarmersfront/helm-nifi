@@ -3,7 +3,7 @@ entries:
   nifi:
   - apiVersion: v2
     appVersion: 1.27.0
-    created: "2024-08-05T15:51:34.45581+09:00"
+    created: "2024-08-05T18:22:35.521762+09:00"
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
@@ -24,7 +24,7 @@ entries:
       version: ~1.2.4
     description: Apache NiFi is a software project from the Apache Software Foundation
       designed to automate the flow of data between software systems.
-    digest: 90d5b8be8224477674887c967587d5f98dc4bb265fa0224829a1ea379c59e3ac
+    digest: 0837722a5f7de354c9e7409959083aca5ce101a70c511a3fc958dc5ff316f358
     home: https://nifi.apache.org/
     icon: https://svn.apache.org/repos/asf/nifi/site/trunk/images/niFi-logo-horizontal-scaled.png
     keywords:
@@ -54,7 +54,7 @@ entries:
   nifi-registry:
   - apiVersion: v2
     appVersion: 0.8.0
-    created: "2024-08-05T15:51:34.445884+09:00"
+    created: "2024-08-05T18:22:35.5116+09:00"
     description: A subproject of Apache NiFi to store and manage shared resources.
     digest: 94f8cf73f20faaa36a3ff03fb2eeac1dd01614af8246a93cbc3c79722fbef72a
     home: https://github.com/dysnix/charts/tree/master/dysnix/nifi-registry
@@ -70,7 +70,7 @@ entries:
   openldap:
   - apiVersion: v1
     appVersion: 2.4.48
-    created: "2024-08-05T15:51:34.446244+09:00"
+    created: "2024-08-05T18:22:35.512+09:00"
     deprecated: true
     description: DEPRECATED - Community developed LDAP software
     digest: addd603ed45a87bc275c2d77d91b43b0c8b9ad987e6a160a68fefd49583c737c
@@ -96,7 +96,7 @@ entries:
       licenses: Apache-2.0
     apiVersion: v2
     appVersion: 3.9.2
-    created: "2024-08-05T15:51:34.44892+09:00"
+    created: "2024-08-05T18:22:35.514275+09:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -119,4 +119,4 @@ entries:
     urls:
     - charts/zookeeper-13.4.8.tgz
     version: 13.4.8
-generated: "2024-08-05T15:51:34.444841+09:00"
+generated: "2024-08-05T18:22:35.510456+09:00"
