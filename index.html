@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NiFi Helm Chart</title>
+    <script>
+        // JavaScript to detect the user's language and redirect if necessary
+        document.addEventListener("DOMContentLoaded", function() {
+            let userLang = navigator.language || navigator.userLanguage;
+            if (userLang.startsWith('ko')) {
+                window.location.href = 'index_ko.html';
+            }
+        });
+    </script>
+</head>
+<body>
+<header>
+    <h1>NiFi Helm Chart</h1>
+</header>
+<main>
+    <section>
+        <h2>Introduction</h2>
+        <p>This is a Helm Chart for deploying Apache NiFi on a Kubernetes cluster. With this Helm Chart, you can easily install and manage NiFi.</p>
+    </section>
+    <section>
+        <h2>Features</h2>
+        <ul>
+            <li>Easy installation and upgrade</li>
+            <li>Flexible configuration options</li>
+            <li>Scalable architecture</li>
+        </ul>
+    </section>
+    <section>
+        <h2>Installation Guide</h2>
+        <ol>
+            <li>Add Helm repository:
+                <pre><code>helm repo add kurly https://helloworld.kurly.com/helm-nifi</code></pre>
+            </li>
+            <li>Install Helm chart:
+                <pre><code>helm install nifi kurly/nifi</code></pre>
+            </li>
+        </ol>
+    </section>
+    <section>
+        <h2>Documentation</h2>
+        <p>For more details, please refer to the <a href="https://github.com/thefarmersfront/helm-nifi">GitHub page</a>.</p>
+    </section>
+</main>
+<footer>
+    <p>&copy; KURLY CORP. ALL RIGHTS RESERVED</p>
+</footer>
+</body>
+</html>
