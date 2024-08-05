@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NiFi Helm Chart</title>
+    <script>
+        // JavaScript to detect the user's language and redirect if necessary
+        document.addEventListener("DOMContentLoaded", function() {
+            let userLang = navigator.language || navigator.userLanguage;
+            if (!userLang.startsWith('ko')) {
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
+</head>
+<body>
+<header>
+    <h1>NiFi Helm Chart</h1>
+</header>
+<main>
+    <section>
+        <h2>소개</h2>
+        <p>Apache NiFi를 Kubernetes 클러스터에 배포하기 위한 Helm Chart입니다. 이 Helm Chart를 사용하면 NiFi를 손쉽게 설치하고 관리할 수 있습니다.</p>
+    </section>
+    <section>
+        <h2>특징</h2>
+        <ul>
+            <li>간편한 설치 및 업그레이드</li>
+            <li>유연한 구성 옵션</li>
+            <li>확장 가능한 아키텍처</li>
+        </ul>
+    </section>
+    <section>
+        <h2>설치 방법</h2>
+        <ol>
+            <li>Helm 저장소 추가:
+                <pre><code>helm repo add kurly https://helloworld.kurly.com/helm-nifi</code></pre>
+            </li>
+            <li>Helm 차트 설치:
+                <pre><code>helm install nifi kurly/nifi</code></pre>
+            </li>
+        </ol>
+    </section>
+    <section>
+        <h2>문서</h2>
+        <p>자세한 내용은 <a href="https://github.com/thefarmersfront/helm-nifi">GitHub 페이지</a>를 참조하세요.</p>
+    </section>
+</main>
+<footer>
+    <p>&copy; KURLY CORP. ALL RIGHTS RESERVED</p>
+</footer>
+</body>
+</html>

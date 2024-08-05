@@ -25,6 +25,9 @@ maintainers:
   - name: zakaria2905
     email: zakaria.hajja@cetic.be
     url: https://github.com/zakaria2905
+  - name: dp-daesung
+    email: daniel.park@kurlycorp.com
+    url: https://github.com/dp-daesung
 dependencies:
   - name: zookeeper
     version: 13.4.8
