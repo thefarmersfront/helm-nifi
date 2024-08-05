@@ -2,7 +2,13 @@ name: Test-SafetyValve
 
 on:
   push:
+    branches:
+      - main
   pull_request:
+    branches:
+      - main
+    types:
+      - closed
 
 jobs:
   test-safetyvalve:

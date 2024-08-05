@@ -2,7 +2,13 @@ name: OIDC Logins
 
 on:
   push:
+    branches:
+      - main
   pull_request:
+    branches:
+      - main
+    types:
+      - closed
 
 jobs:
   oidc-insecure:
