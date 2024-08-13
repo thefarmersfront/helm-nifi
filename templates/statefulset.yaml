@@ -9,7 +9,8 @@ metadata:
     release: {{ .Release.Name | quote }}
     heritage: {{ .Release.Service | quote }}
 spec:
-  podManagementPolicy: {{ .Values.sts.podManagementPolicy }}
+  # Parallel podManagementPolicy for faster bootstrap and teardown. OrderedReady(default) is not recommended here.
+  podManagementPolicy: Parallel
   serviceName: {{ template "apache-nifi.fullname" . }}-headless
   replicas: {{ .Values.replicaCount }}
   selector:
