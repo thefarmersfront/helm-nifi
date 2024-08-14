@@ -20,6 +20,7 @@ spec:
   template:
     metadata:
       annotations:
+        configmap-reload-hash: "{{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}"
 {{- if .Values.sts.pod.annotations }}
 {{ toYaml .Values.sts.pod.annotations | indent 8 }}
 {{- end }}
