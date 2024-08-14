@@ -448,5 +448,4 @@ metrics:
       enabled: false
       # namespace: monitoring
       # Additional labels for the ServiceMonitor
-      labels: {}
       labels: { }
