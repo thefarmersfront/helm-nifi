@@ -82,10 +82,12 @@ spec:
       nodeSelector:
 {{ toYaml .Values.nodeSelector | indent 8 }}
 {{- end }}
-{{- if .Values.securityContext }}
       securityContext:
-{{ toYaml .Values.securityContext | indent 8 }}
-{{- end }}
+        runAsUser: 1000
+        fsGroup: 1000
+        sysctls:
+          - name: net.ipv4.ip_local_port_range
+            value: "10000 65000"
       initContainers:
 {{- if .Values.properties.isNode }}
       - name: zookeeper
