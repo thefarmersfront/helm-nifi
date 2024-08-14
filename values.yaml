@@ -95,7 +95,9 @@ properties:
   externalSecure: false
   isNode: false
   httpsPort: 8443
-  webProxyHost: # <clusterIP>:<NodePort> (If Nifi service is NodePort or LoadBalancer)
+  webProxyHost: [] # <clusterIP>:<NodePort> (If Nifi service is NodePort or LoadBalancer)
+#    - localhost:30001
+#    - localhost:30002
   clusterPort: 6007
   zkClientEnsembleTraker: false # https://issues.apache.org/jira/browse/NIFI-10481
   clusterNodeConnectionTimeout: '5 sec'

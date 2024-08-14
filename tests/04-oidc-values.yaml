@@ -14,7 +14,8 @@ auth:
     claimIdentifyingUser: email
 
 properties:
-  webProxyHost: nifi.default.svc.cluster.local:8443
+  webProxyHost:
+    - nifi.default.svc.cluster.local:8443
 
 sts:
   startupProbe:

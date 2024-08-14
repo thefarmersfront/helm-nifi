@@ -162,13 +162,6 @@ spec:
           prop_replace nifi.zookeeper.connect.string ${NIFI_ZOOKEEPER_CONNECT_STRING}
           prop_replace nifi.web.http.host ${FQDN}
 
-{{- if .Values.properties.webProxyHost }}
-          # Update nifi.properties for web ui proxy hostname
-          prop_replace nifi.web.proxy.host {{ .Values.properties.webProxyHost }}
-{{- else }}
-          prop_replace nifi.web.proxy.host {{ template "apache-nifi.fullname" $ }}.{{ .Release.Namespace }}.svc
-{{- end }}
-
 {{- if .Values.certManager.enabled }}
           prop_replace nifi.security.keystore "${NIFI_HOME}/tls/keystore.jks"
           prop_replace nifi.security.keystoreType JKS
