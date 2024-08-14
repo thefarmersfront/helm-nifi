@@ -183,11 +183,6 @@ openldap:
 ## ref: http://kubernetes.io/docs/user-guide/services/
 ##
 
-# headless service
-headless:
-  annotations:
-    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
-
 # ui service
 service:
   type: ClusterIP
