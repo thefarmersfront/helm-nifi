@@ -18,10 +18,11 @@ image:
   ##
   # pullSecret: myRegistrKeySecretName
 
+# Amount of memory to give the NiFi java heap
+jvmMemory: 2g
 
 sts:
   AntiAffinity: soft
-
   ## @param useHostNetwork - boolean - optional
   ## Bind ports on the hostNetwork. Useful for CNI networking where hostPort might
   ## not be supported. The ports need to be available on all hosts. It can be
@@ -226,9 +227,6 @@ ingress:
   hosts: [ ]
   path: /
   # If you want to change the default path, see this issue https://github.com/cetic/helm-nifi/issues/22
-
-# Amount of memory to give the NiFi java heap
-jvmMemory: 2g
 
 # Separate image for tailing each log separately and checking zookeeper connectivity
 sidecar:
