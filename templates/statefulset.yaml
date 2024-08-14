@@ -469,6 +469,9 @@ spec:
           - name: "zookeeper-properties"
             mountPath: /opt/nifi/nifi-current/conf/zookeeper.properties
             subPath: "zookeeper.properties"
+          - name: "logback-xml"
+            mountPath: /opt/nifi/nifi-current/conf/logback.xml
+            subPath: "logback.xml"
           - name: "flow-content"
             mountPath: /opt/nifi/data/flow.xml
             subPath: "flow.xml"
@@ -737,6 +740,12 @@ spec:
           items:
             - key: "zookeeper.properties"
               path: "zookeeper.properties"
+      - name: "logback-xml"
+        configMap:
+          name: {{ template "apache-nifi.fullname" . }}-config
+          items:
+            - key: "logback.xml"
+              path: "logback.xml"
       - name: "flow-content"
         configMap:
           name: {{ template "apache-nifi.fullname" . }}-config
