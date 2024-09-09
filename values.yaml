@@ -110,7 +110,7 @@ properties:
     #nifi.variable.registry.properties: "${NIFI_HOME}/example1.properties, ${NIFI_HOME}/example2.properties"
   safetyValve: {}
 
-  ## Include aditional processors
+  ## Include additional processors
   # customLibPath: "/opt/configuration_resources/custom_lib"
   customLibPath: nil
 
