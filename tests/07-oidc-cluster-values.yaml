@@ -17,7 +17,7 @@ sts:
 replicaCount: 3
 
 properties:
-  webProxyHost: ingress-nginx-controller.ingress-nginx.svc.cluster.local
+  webProxyHost: ["ingress-nginx-controller.ingress-nginx.svc.cluster.local"]
   isNode: true
 
 auth:

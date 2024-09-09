@@ -12,33 +12,24 @@ image:
   repository: apache/nifi
   tag: "1.27.0"
   pullPolicy: "IfNotPresent"
-
   ## Optionally specify an imagePullSecret.
   ## Secret must be manually created in the namespace.
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
   ##
   # pullSecret: myRegistrKeySecretName
 
-securityContext:
-  runAsUser: 1000
-  fsGroup: 1000
-  sysctls:
-    - name: net.ipv4.ip_local_port_range
-      value: "10000 65000"
-
-## @param useHostNetwork - boolean - optional
-## Bind ports on the hostNetwork. Useful for CNI networking where hostPort might
-## not be supported. The ports need to be available on all hosts. It can be
-## used for custom metrics instead of a service endpoint.
-##
-## WARNING: Make sure that hosts using this are properly firewalled otherwise
-## metrics and traces are accepted from any host able to connect to this host.
-#
+# Amount of memory to give the NiFi java heap
+jvmMemory: 2g
 
 sts:
-  # Parallel podManagementPolicy for faster bootstrap and teardown. Default is OrderedReady.
-  podManagementPolicy: Parallel
   AntiAffinity: soft
+  ## @param useHostNetwork - boolean - optional
+  ## Bind ports on the hostNetwork. Useful for CNI networking where hostPort might
+  ## not be supported. The ports need to be available on all hosts. It can be
+  ## used for custom metrics instead of a service endpoint.
+  ##
+  ## WARNING: Make sure that hosts using this are properly firewalled otherwise
+  ## metrics and traces are accepted from any host able to connect to this host.
   useHostNetwork: null
   hostPort: null
   pod:
@@ -67,6 +58,7 @@ sts:
 #     - key1
 #     - key2
 #   mountPath: /opt/nifi/secret
+secrets: {}
 
 ## Useful if using any custom configmaps
 ## Pass in some configmaps to use (if required)
@@ -75,7 +67,7 @@ sts:
 #     keys:
 #       - myconf.conf
 #     mountPath: /opt/nifi/custom-config
-
+configmaps: {}
 
 properties:
   # https://nifi.apache.org/docs/nifi-docs/html/administration-guide.html#nifi_sensitive_props_key
@@ -97,7 +89,9 @@ properties:
   externalSecure: false
   isNode: false
   httpsPort: 8443
-  webProxyHost: # <clusterIP>:<NodePort> (If Nifi service is NodePort or LoadBalancer)
+  webProxyHost: [] # <clusterIP>:<NodePort> (If Nifi service is NodePort or LoadBalancer)
+#    - localhost:30001
+#    - localhost:30002
   clusterPort: 6007
   zkClientEnsembleTraker: false # https://issues.apache.org/jira/browse/NIFI-10481
   clusterNodeConnectionTimeout: '5 sec'
@@ -114,14 +108,16 @@ properties:
     port: 10000
   # use properties.safetyValve to pass explicit 'key: value' pairs that overwrite other configuration
     #nifi.variable.registry.properties: "${NIFI_HOME}/example1.properties, ${NIFI_HOME}/example2.properties"
-  safetyValve: { }
+  safetyValve: {}
 
-  ## Include aditional processors
+  ## Include additional processors
   # customLibPath: "/opt/configuration_resources/custom_lib"
+  customLibPath: nil
 
 ## Include additional libraries in the Nifi containers by using the postStart handler
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/attach-handler-lifecycle-event/
 # postStart: /opt/nifi/psql; wget -P /opt/nifi/psql https://jdbc.postgresql.org/download/postgresql-42.2.6.jar
+  postStart: nil
 
 # Nifi User Authentication
 auth:
@@ -185,12 +181,6 @@ openldap:
 ## ref: http://kubernetes.io/docs/user-guide/services/
 ##
 
-# headless service
-headless:
-  type: ClusterIP
-  annotations:
-    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
-
 # ui service
 service:
   type: ClusterIP
@@ -237,9 +227,6 @@ ingress:
   hosts: [ ]
   path: /
   # If you want to change the default path, see this issue https://github.com/cetic/helm-nifi/issues/22
-
-# Amount of memory to give the NiFi java heap
-jvmMemory: 2g
 
 # Separate image for tailing each log separately and checking zookeeper connectivity
 sidecar:
@@ -459,5 +446,4 @@ metrics:
       enabled: false
       # namespace: monitoring
       # Additional labels for the ServiceMonitor
-      labels: {}
       labels: { }

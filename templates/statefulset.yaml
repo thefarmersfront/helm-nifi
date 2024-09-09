@@ -9,7 +9,8 @@ metadata:
     release: {{ .Release.Name | quote }}
     heritage: {{ .Release.Service | quote }}
 spec:
-  podManagementPolicy: {{ .Values.sts.podManagementPolicy }}
+  # Parallel podManagementPolicy for faster bootstrap and teardown. OrderedReady(default) is not recommended here.
+  podManagementPolicy: Parallel
   serviceName: {{ template "apache-nifi.fullname" . }}-headless
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -19,6 +20,7 @@ spec:
   template:
     metadata:
       annotations:
+        checksum/config: {{ (.Files.Glob "configs/*").AsConfig | sha256sum | quote }}
 {{- if .Values.sts.pod.annotations }}
 {{ toYaml .Values.sts.pod.annotations | indent 8 }}
 {{- end }}
@@ -80,10 +82,12 @@ spec:
       nodeSelector:
 {{ toYaml .Values.nodeSelector | indent 8 }}
 {{- end }}
-{{- if .Values.securityContext }}
       securityContext:
-{{ toYaml .Values.securityContext | indent 8 }}
-{{- end }}
+        runAsUser: 1000
+        fsGroup: 1000
+        sysctls:
+          - name: net.ipv4.ip_local_port_range
+            value: "10000 65000"
       initContainers:
 {{- if .Values.properties.isNode }}
       - name: zookeeper
@@ -160,13 +164,6 @@ spec:
           prop_replace nifi.cluster.node.address ${FQDN}
           prop_replace nifi.zookeeper.connect.string ${NIFI_ZOOKEEPER_CONNECT_STRING}
           prop_replace nifi.web.http.host ${FQDN}
-
-{{- if .Values.properties.webProxyHost }}
-          # Update nifi.properties for web ui proxy hostname
-          prop_replace nifi.web.proxy.host {{ .Values.properties.webProxyHost }}
-{{- else }}
-          prop_replace nifi.web.proxy.host {{ template "apache-nifi.fullname" $ }}.{{ .Release.Namespace }}.svc
-{{- end }}
 
 {{- if .Values.certManager.enabled }}
           prop_replace nifi.security.keystore "${NIFI_HOME}/tls/keystore.jks"
@@ -256,7 +253,7 @@ spec:
               echo "truststore=$(prop nifi.security.truststore)" >> secure.properties
               echo "truststorePasswd=$(prop nifi.security.truststorePasswd)" >> secure.properties
               echo "proxiedEntity={{ .Values.auth.admin }}" >> secure.properties
-             
+
               secureArgs="-p secure.properties"
 
               echo baseUrl ${baseUrl}
@@ -323,7 +320,7 @@ spec:
 {{- if .Values.metrics.prometheus.enabled }}
         - containerPort: {{ .Values.metrics.prometheus.port }}
           name: metrics
-          protocol: TCP                  
+          protocol: TCP
 {{- end }}
         - containerPort: {{ .Values.properties.httpsPort }}
 {{- if .Values.sts.hostPort }}
@@ -472,6 +469,9 @@ spec:
           - name: "zookeeper-properties"
             mountPath: /opt/nifi/nifi-current/conf/zookeeper.properties
             subPath: "zookeeper.properties"
+          - name: "logback-xml"
+            mountPath: /opt/nifi/nifi-current/conf/logback.xml
+            subPath: "logback.xml"
           - name: "flow-content"
             mountPath: /opt/nifi/data/flow.xml
             subPath: "flow.xml"
@@ -518,7 +518,7 @@ spec:
       - name: app-log
         imagePullPolicy: {{ .Values.sidecar.imagePullPolicy | default "Always" | quote }}
         image: "{{ .Values.sidecar.image }}:{{ .Values.sidecar.tag }}"
-        args: 
+        args:
           - /bin/sh
           - -c
           - trap "exit 0" TERM; tail -n+1 -F /var/log/nifi-app.log & wait $!
@@ -575,7 +575,7 @@ spec:
         - -ce
         - |
           trap "exit 0" TERM
-          
+
           NODENAME=$(hostname)
           mkdir -p "${NIFI_HOME}"/tls/cert-manager
 
@@ -594,12 +594,12 @@ spec:
                  --output /tmp/secret.json
             jq .data < /tmp/secret.json > /tmp/secret-data.json
             rm -f /tmp/secret.json
-          }       
-        
+          }
+
           pullNodeSecretData
           jq -r '."ca.crt"' < /tmp/secret-data.json | base64 -d > "${NIFI_HOME}"/tls/cert-manager/ca.crt
           touch /tmp/tls.crt.old
-            
+
           rm -f "${NIFI_HOME}/tls/truststore-new.jks"
           for ca in "${NIFI_HOME}"/tls/*/ca.crt
           do
@@ -740,6 +740,12 @@ spec:
           items:
             - key: "zookeeper.properties"
               path: "zookeeper.properties"
+      - name: "logback-xml"
+        configMap:
+          name: {{ template "apache-nifi.fullname" . }}-config
+          items:
+            - key: "logback.xml"
+              path: "logback.xml"
       - name: "flow-content"
         configMap:
           name: {{ template "apache-nifi.fullname" . }}-config

@@ -9,6 +9,6 @@ metadata:
     release: {{ .Release.Name | quote }}
     heritage: {{ .Release.Service | quote }}
   annotations:
-    lastUpdate: {{ now | quote }}
+    checksum/config: {{ (.Files.Glob "configs/*").AsConfig | sha256sum | quote }}
 data:
 {{ (tpl (.Files.Glob "configs/*").AsConfig . ) | indent 2 }}
