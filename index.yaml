@@ -3,7 +3,7 @@ entries:
   nifi:
   - apiVersion: v2
     appVersion: 1.27.0
-    created: "2024-10-02T10:02:28.685172897Z"
+    created: "2024-10-02T10:07:02.172443889Z"
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
@@ -24,7 +24,7 @@ entries:
       version: ~1.2.4
     description: Apache NiFi is a software project from the Apache Software Foundation
       designed to automate the flow of data between software systems.
-    digest: 723472540c9085683d32633d939ba28eaad14fb282d9d7ccce08f018342b0b3c
+    digest: d6fef401d2bfc84891460675bcc0f7b55b1e15f094570ad340a3237fc74a7028
     home: https://nifi.apache.org/
     icon: https://svn.apache.org/repos/asf/nifi/site/trunk/images/niFi-logo-horizontal-scaled.png
     keywords:
@@ -53,7 +53,7 @@ entries:
     version: 1.3.2
   - apiVersion: v2
     appVersion: 1.27.0
-    created: "2024-10-02T10:02:28.666254839Z"
+    created: "2024-10-02T10:07:02.153307628Z"
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
@@ -103,7 +103,7 @@ entries:
     version: 1.3.1
   - apiVersion: v2
     appVersion: 1.27.0
-    created: "2024-10-02T10:02:28.658212723Z"
+    created: "2024-10-02T10:07:02.145284161Z"
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
@@ -154,7 +154,7 @@ entries:
   nifi-registry:
   - apiVersion: v2
     appVersion: 0.8.0
-    created: "2024-10-02T10:02:28.643379402Z"
+    created: "2024-10-02T10:07:02.13511125Z"
     description: A subproject of Apache NiFi to store and manage shared resources.
     digest: 94f8cf73f20faaa36a3ff03fb2eeac1dd01614af8246a93cbc3c79722fbef72a
     home: https://github.com/dysnix/charts/tree/master/dysnix/nifi-registry
@@ -170,7 +170,7 @@ entries:
   openldap:
   - apiVersion: v1
     appVersion: 2.4.48
-    created: "2024-10-02T10:02:28.644549928Z"
+    created: "2024-10-02T10:07:02.135578635Z"
     deprecated: true
     description: DEPRECATED - Community developed LDAP software
     digest: addd603ed45a87bc275c2d77d91b43b0c8b9ad987e6a160a68fefd49583c737c
@@ -196,7 +196,7 @@ entries:
       licenses: Apache-2.0
     apiVersion: v2
     appVersion: 3.9.2
-    created: "2024-10-02T10:02:28.649042232Z"
+    created: "2024-10-02T10:07:02.138139091Z"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -219,4 +219,4 @@ entries:
     urls:
     - charts/zookeeper-13.4.8.tgz
     version: 13.4.8
-generated: "2024-10-02T10:02:28.640996061Z"
+generated: "2024-10-02T10:07:02.133775889Z"
