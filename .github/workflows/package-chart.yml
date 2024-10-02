@@ -1,7 +1,7 @@
 name: Package and Release Helm Chart
 
 on:
-  push:
+  pull_request:
     branches:
       - main
 
