@@ -33,7 +33,7 @@ jobs:
 
       - name: Commit and Push changes
         run: |
-          git checkout ${{ github.head_ref }}
+          git checkout ${{ github.event.pull_request.head.ref }}
           git add dist/
           git add index.yaml
           git commit -m "Update Helm chart and index"
