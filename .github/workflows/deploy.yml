@@ -1,13 +1,9 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+name: Package and Release Helm Chart
 
 on:
-  # Runs on pushes targeting the default branch
   push:
-    branches: ["release/*"]
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+    branches:
+      - release/*
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
@@ -22,8 +18,40 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Single deploy job since we're just deploying
+  package:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4.2.0
+
+      - name: Update Helm dependencies
+        run: helm dependency update ./
+
+      - name: Helm package
+        run: helm package ./ -d dist
+
+      - name: Update Helm repo index
+        run: |
+          helm repo index ./
+
+      - name: Configure Git
+        run: |
+          git config --local user.name "GitHub Actions"
+          git config --local user.email "actions@github.com"
+
+      - name: Commit and Push changes
+        run: |
+          git add dist/
+          git add index.yaml
+          git commit -m "${{ github.event.head_commit.message }}" || echo "No changes to commit"
+          git push origin
+
   deploy:
+    needs: package
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -36,8 +64,10 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
-          path: '.'
+          path: |
+            dist
+            index.yaml
+            index*.html
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
