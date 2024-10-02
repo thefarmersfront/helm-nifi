@@ -3,8 +3,8 @@ name: Package and Release Helm Chart
 on:
   push:
     branches:
-      - main
-
+      - release/*
+      
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -35,5 +35,5 @@ jobs:
         run: |
           git add dist/
           git add index.yaml
-          git commit -m "Update Helm chart and index"
+          git commit -m "Update Helm chart and index" || echo "No changes to commit"
           git push origin
