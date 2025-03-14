@@ -22,7 +22,6 @@ image:
 jvmMemory: 2g
 
 sts:
-  AntiAffinity: soft
   ## @param useHostNetwork - boolean - optional
   ## Bind ports on the hostNetwork. Useful for CNI networking where hostPort might
   ## not be supported. The ports need to be available on all hosts. It can be
@@ -31,6 +30,7 @@ sts:
   ## WARNING: Make sure that hosts using this are properly firewalled otherwise
   ## metrics and traces are accepted from any host able to connect to this host.
   useHostNetwork: null
+  AntiAffinity: soft
   hostPort: null
   pod:
       #prometheus.io/scrape: "true"
@@ -87,6 +87,8 @@ properties:
   algorithm: NIFI_PBKDF2_AES_GCM_256
   # use externalSecure for when inbound SSL is provided by nginx-ingress or other external mechanism
   externalSecure: false
+  # This value determines whether to configure NiFi as a cluster node.
+  # If this value is True, the zookeeper.enabled value should be True.
   isNode: false
   httpsPort: 8443
   webProxyHost: [] # <clusterIP>:<NodePort> (If Nifi service is NodePort or LoadBalancer)
@@ -414,11 +416,11 @@ certManager:
 zookeeper:
   ## If true, install the Zookeeper chart
   ## ref: https://github.com/bitnami/charts/blob/master/bitnami/zookeeper/values.yaml
-  enabled: true
+  enabled: false
   ## If the Zookeeper Chart is disabled a URL and port are required to connect
   url: ""
   port: 2181
-  replicaCount: 1
+  replicaCount: 3
 
 # ------------------------------------------------------------------------------
 # Nifi registry:
