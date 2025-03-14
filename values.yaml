@@ -10,7 +10,7 @@ replicaCount: 1
 ##
 image:
   repository: apache/nifi
-  tag: "1.27.0"
+  tag: "1.28.1"
   pullPolicy: "IfNotPresent"
   ## Optionally specify an imagePullSecret.
   ## Secret must be manually created in the namespace.
@@ -418,7 +418,7 @@ zookeeper:
   ## If the Zookeeper Chart is disabled a URL and port are required to connect
   url: ""
   port: 2181
-  replicaCount: 3
+  replicaCount: 1
 
 # ------------------------------------------------------------------------------
 # Nifi registry:
@@ -430,7 +430,7 @@ registry:
   port: 80
   image:
     repository: apache/nifi-registry
-    tag: "1.27.0"
+    tag: "1.28.1"
     pullPolicy: "IfNotPresent"
   ## Add values for the nifi-registry here
   ## ref: https://github.com/dysnix/charts/blob/main/dysnix/nifi-registry/values.yaml
