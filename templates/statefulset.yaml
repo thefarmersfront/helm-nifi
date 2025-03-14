@@ -139,10 +139,7 @@ spec:
 {{- end }}
 
           mv "${NIFI_HOME}/conf/nifi.properties" "${NIFI_HOME}/conf/nifi.properties.old"
-          mv "${NIFI_HOME}/conf/authorizers.xml" "${NIFI_HOME}/conf/authorizers.xml.old"
-
           cat "${NIFI_HOME}/conf/nifi.properties.temp" > "${NIFI_HOME}/conf/nifi.properties"
-          cat "${NIFI_HOME}/conf/authorizers.xml.temp" > "${NIFI_HOME}/conf/authorizers.xml"
 
 {{- if .Values.auth.ldap.enabled }}
           cat "${NIFI_HOME}/conf/login-identity-providers-custom.xml" > "${NIFI_HOME}/conf/login-identity-providers.xml"
@@ -455,7 +452,7 @@ spec:
             mountPath: /opt/nifi/nifi-current/conf/nifi.properties.temp
             subPath: "nifi.properties"
           - name: "authorizers-xml"
-            mountPath: /opt/nifi/nifi-current/conf/authorizers.xml.temp
+            mountPath: /opt/nifi/nifi-current/conf/authorizers.xml
             subPath: "authorizers.xml"
           - name: "bootstrap-notification-services-xml"
             mountPath: /opt/nifi/nifi-current/conf/bootstrap-notification-services.xml
