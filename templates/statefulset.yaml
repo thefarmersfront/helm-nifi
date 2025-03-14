@@ -216,15 +216,15 @@ spec:
 {{- if .Values.properties.sensitiveKeySetFile }}
           if [ ! -r {{ .Values.properties.sensitiveKeySetFile | quote }} ]
           then
-{{- if .Values.properties.sensitiveKeyPrior }}
+  {{- if .Values.properties.sensitiveKeyPrior }}
             prop_replace nifi.sensitive.props.key {{ .Values.properties.sensitiveKeyPrior | quote }}
-{{- /* if .Values.properties.sensitiveKeyPrior */}}{{ else }}
+  {{- else }}
             prop_replace nifi.sensitive.props.key ""
-{{- /* if .Values.properties.sensitiveKeyPrior */}}{{ end }}
+  {{- end }}
             bin/nifi.sh set-sensitive-properties-key {{ .Values.properties.sensitiveKey | quote }}
             touch {{ .Values.properties.sensitiveKeySetFile | quote }}
           fi
-{{- /* if .Values.properties.sensitiveKeySetFile */}}{{ end }}
+{{- end }}
 
           for f in "${NIFI_HOME}/conf/authorizers.xml" "${NIFI_HOME}/conf/login-identity-providers.xml" ${NIFI_HOME}/conf/nifi.properties
           do
