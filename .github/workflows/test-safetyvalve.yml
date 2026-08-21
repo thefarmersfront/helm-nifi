@@ -13,7 +13,7 @@ on:
 jobs:
   test-safetyvalve:
     name: Test NiFi Helm Chart SafetyValve Properties
-    runs-on: ubuntu-latest
+    runs-on: build-runner
     steps:
       - name: Checkout
         uses: actions/checkout@v3

@@ -13,7 +13,7 @@ on:
 jobs:
   test-singleuser:
     name: Test NiFi Helm Chart Single User
-    runs-on: ubuntu-latest
+    runs-on: build-runner
     steps:
       - name: Checkout
         uses: actions/checkout@v3

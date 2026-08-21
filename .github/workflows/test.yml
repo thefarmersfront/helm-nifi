@@ -15,7 +15,7 @@ on:
 jobs:
   example:
     name: Minikube installation - Basic test
-    runs-on: ubuntu-latest
+    runs-on: build-runner
     steps:
       - name: Checkout
         uses: actions/checkout@v4
