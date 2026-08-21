@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   package:
-    runs-on: build-runner
+    runs-on: deploy-runner
 
     steps:
       - name: Checkout code
@@ -55,7 +55,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: build-runner
+    runs-on: deploy-runner
     steps:
       - name: Checkout
         uses: actions/checkout@v4

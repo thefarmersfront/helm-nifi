@@ -7,7 +7,7 @@ on:
 jobs:
   stale:
 
-    runs-on: build-runner
+    runs-on: eks-etc-runner
 
     steps:
     - uses: actions/stale@v9
